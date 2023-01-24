@@ -1,5 +1,6 @@
 import pygame, sys, random, math, time
 from pygame.locals import *
+import json
 
 pygame.init()
 
@@ -17,7 +18,15 @@ curtain_y = -1300
 
 # Stats
 score = 0
-score_max = 0
+with open("best.txt", "r") as file:
+	data = file.read()
+
+	if data is not None:
+		data = json.loads(data)
+  
+		values = data.get("best")
+
+score_max = values
 spd = 3
 player_pos = vec(0,0)
 
@@ -87,9 +96,6 @@ def music():
 
 def main_menu():
 	global press_y
-	credits = credit_font.render("©GOODGIS 2022", True, (0, 0, 0))
-	credits_rect = credits.get_rect(center=(WIDTH//2, 620))
-	SCREEN.blit(credits, credits_rect)
 
 	best_score = score_font.render("Best: " + str(score_max), True, (0, 0, 0))
 	best_score_rect = best_score.get_rect(center=(WIDTH//2, 220))
@@ -101,7 +107,9 @@ def main_menu():
 
 	if press_y > 460:
 		press_y = press_y * 0.99
-	SCREEN.blit(press_key, (0, press_y))
+  
+	press_key_rect = press_key.get_rect(center=(WIDTH//2, 500))
+	SCREEN.blit(press_key, press_key_rect)
 
 
 def scoreboard():
@@ -184,7 +192,7 @@ class Hand(pygame.sprite.Sprite):
 
 
 	def draw(self, surface):
-		SCREEN.blit(dotted_line, (0, self.rect.y + 53))
+		# SCREEN.blit(dotted_line, (0, self.rect.y + 53))
 		surface.blit(self.image, self.rect)
 
 	def reset(self, side):
@@ -304,6 +312,19 @@ def main():
 				global score_max
 				if score > score_max:
 					score_max = score
+     
+					with open("best.txt", "r") as file:
+						data = file.read()
+					
+						if data is not None:
+							data = json.loads(data)
+
+							data["best"] = score
+							
+							with open("best.txt", "w") as file:
+								file.write(json.dumps(data))
+				
+            
 				pygame.mixer.Sound.play(slap_sfx)
 				time.sleep(0.5)
 				P1.reset()
