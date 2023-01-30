@@ -8,11 +8,7 @@ class GlobalState:
     GAME_STATE = GameStatus.MAIN_MENU
     SCREEN = None
     SCROLL = 0
-    PLAYER_POSITION = pygame.math.Vector2(0, 0)
-
-    @staticmethod
-    def reset():
-        pass
+    PRESS_Y = 650
 
     @staticmethod
     def load_main_screen():

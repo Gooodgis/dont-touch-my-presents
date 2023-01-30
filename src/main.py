@@ -13,6 +13,9 @@ from src.config import Config
 from src.global_state import GlobalState
 from src.services.music_service import MusicService
 from src.services.visualization_service import VisualizationService
+from src.utils.tools import update_background_using_scroll, update_press_key
+
+FramePerSec = pygame.time.Clock()
 
 pygame.init()
 
@@ -20,36 +23,6 @@ GlobalState.load_main_screen()
 VisualizationService.load_main_game_displays()
 
 scoreboard = Scoreboard()
-
-FramePerSec = pygame.time.Clock()
-
-# Menu
-press_y = 650
-curtain_y = -1300
-
-
-def update_background_using_scroll(scroll):
-    scroll -= .5
-
-    if scroll < -80:
-        scroll = 0
-
-    VisualizationService.draw_background_with_scroll(GlobalState.SCREEN, scroll)
-
-    return scroll
-
-
-def update_press_key(press_y):
-    if press_y > 460:
-        return press_y * 0.99
-
-    return press_y
-
-
-def game_over():
-    GlobalState.GAME_STATE = GameStatus.MAIN_MENU
-    time.sleep(0.5)
-
 
 # Sprite Setup
 P1 = Player()
@@ -66,6 +39,11 @@ all_sprites.add(H1)
 all_sprites.add(H2)
 
 
+def game_over():
+    GlobalState.GAME_STATE = GameStatus.MAIN_MENU
+    time.sleep(0.5)
+
+
 def gameplay_phase():
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -73,12 +51,11 @@ def gameplay_phase():
             sys.exit()
 
     P1.update()
-
-    GlobalState.PLAYER_POSITION = P1.player_position.copy()
-    H1.move(scoreboard, GlobalState.PLAYER_POSITION)
-    H2.move(scoreboard, GlobalState.PLAYER_POSITION)
+    H1.move(scoreboard, P1.player_position)
+    H2.move(scoreboard, P1.player_position)
 
     GlobalState.SCROLL = update_background_using_scroll(GlobalState.SCROLL)
+    VisualizationService.draw_background_with_scroll(GlobalState.SCREEN, GlobalState.SCROLL)
 
     P1.draw(GlobalState.SCREEN)
     H1.draw(GlobalState.SCREEN)
@@ -108,8 +85,6 @@ def close_app():
 
 
 def main_menu_phase():
-    global press_y
-
     for event in pygame.event.get():
         if event.type == QUIT:
             GlobalState.GAME_STATE = GameStatus.GAME_END
@@ -120,10 +95,9 @@ def main_menu_phase():
             return
 
     GlobalState.SCROLL = update_background_using_scroll(GlobalState.SCROLL)
-
-    press_y = update_press_key(press_y)
-
-    VisualizationService.draw_main_menu(GlobalState.SCREEN, scoreboard.get_max_score(), press_y)
+    VisualizationService.draw_background_with_scroll(GlobalState.SCREEN, GlobalState.SCROLL)
+    GlobalState.PRESS_Y = update_press_key(GlobalState.PRESS_Y)
+    VisualizationService.draw_main_menu(GlobalState.SCREEN, scoreboard.get_max_score(), GlobalState.PRESS_Y)
 
 
 def main():
