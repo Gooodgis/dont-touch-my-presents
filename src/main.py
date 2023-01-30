@@ -60,9 +60,8 @@ def close_app():
 def gameplay_phase():
     events = pygame.event.get()
 
-    print(len(events))
     for event in events:
-        if event.key == K_ESCAPE:
+        if event.type == pygame.KEYDOWN and event.key == K_ESCAPE:
             game_over()
 
     P1.update()
