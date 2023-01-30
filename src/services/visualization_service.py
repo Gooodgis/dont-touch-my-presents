@@ -5,9 +5,6 @@ from src.config import Config
 from src.utils.tools import sine
 
 
-# total_font = pygame.font.Font(ASSETS_DIR / "BaiJamjuree-Bold.ttf", 68)
-
-
 class VisualizationService:
     @staticmethod
     def get_right_hand_image():
