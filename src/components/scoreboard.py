@@ -24,6 +24,7 @@ class Scoreboard:
     def update_max_score(self):
         if self._current_score > self._max_score:
             ScoreService.update_max_score(self._current_score)
+            self._max_score = self._current_score
 
     def draw(self, screen):
         y = sine(200.0, 1280, 10.0, 40)

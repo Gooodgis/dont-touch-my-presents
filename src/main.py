@@ -40,15 +40,30 @@ all_sprites.add(H2)
 
 
 def game_over():
+    P1.reset()
+    H1.reset()
+    H2.reset()
     GlobalState.GAME_STATE = GameStatus.MAIN_MENU
     time.sleep(0.5)
 
 
+def update_game_display():
+    pygame.display.update()
+    FramePerSec.tick(Config.FPS)
+
+
+def close_app():
+    pygame.quit()
+    sys.exit()
+
+
 def gameplay_phase():
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
+    events = pygame.event.get()
+
+    print(len(events))
+    for event in events:
+        if event.key == K_ESCAPE:
+            game_over()
 
     P1.update()
     H1.move(scoreboard, P1.player_position)
@@ -64,35 +79,25 @@ def gameplay_phase():
 
     if pygame.sprite.spritecollide(P1, hands, False, pygame.sprite.collide_mask):
         scoreboard.update_max_score()
-
         MusicService.play_slap_sound()
         time.sleep(0.5)
-
-        P1.reset()
-        H1.reset()
-        H2.reset()
         game_over()
 
 
-def update_game_display():
-    pygame.display.update()
-    FramePerSec.tick(Config.FPS)
-
-
-def close_app():
-    pygame.quit()
-    sys.exit()
-
-
 def main_menu_phase():
-    for event in pygame.event.get():
-        if event.type == QUIT:
+    events = pygame.event.get()
+
+    for event in events:
+        if event.type != pygame.KEYDOWN:
+            continue
+
+        if event.key == K_ESCAPE:
             GlobalState.GAME_STATE = GameStatus.GAME_END
             return
 
-        if event.type == pygame.KEYDOWN:
-            GlobalState.GAME_STATE = GameStatus.GAMEPLAY
-            return
+        GlobalState.GAME_STATE = GameStatus.GAMEPLAY
+
+        pygame.event.clear()
 
     GlobalState.SCROLL = update_background_using_scroll(GlobalState.SCROLL)
     VisualizationService.draw_background_with_scroll(GlobalState.SCREEN, GlobalState.SCROLL)
