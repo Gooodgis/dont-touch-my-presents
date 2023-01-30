@@ -1,6 +1,7 @@
 import pygame, sys, random, math, time
 from pygame.locals import *
 import json
+from os.path import exists
 
 pygame.init()
 
@@ -18,13 +19,15 @@ curtain_y = -1300
 
 # Stats
 score = 0
-with open("best.txt", "r") as file:
-	data = file.read()
+values = 0
+if exists("./best.txt") == True:
+	with open("best.txt", "r") as file:
+		data = file.read()
 
-	if data is not None:
-		data = json.loads(data)
+		if data is not None:
+			data = json.loads(data)
   
-		values = data.get("best")
+			values = data.get("best")
 
 score_max = values
 
@@ -315,7 +318,9 @@ def main():
 				global score_max
 				if score > score_max:
 					score_max = score
-     
+					if exists("./best.txt") == False:
+						file = open("best.txt","w")
+						file.write('{"best":0}\n')
 					with open("best.txt", "r") as file:
 						data = file.read()
 					
