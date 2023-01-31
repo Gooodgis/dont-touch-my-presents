@@ -2,7 +2,6 @@ import sys
 import time
 
 import pygame
-from pygame.locals import *
 
 from src.components.game_status import GameStatus
 from src.components.hand import Hand
@@ -13,7 +12,7 @@ from src.config import Config
 from src.global_state import GlobalState
 from src.services.music_service import MusicService
 from src.services.visualization_service import VisualizationService
-from src.utils.tools import update_background_using_scroll, update_press_key
+from src.utils.tools import update_background_using_scroll, update_press_key, is_close_app_event
 
 FramePerSec = pygame.time.Clock()
 
@@ -61,8 +60,9 @@ def gameplay_phase():
     events = pygame.event.get()
 
     for event in events:
-        if event.type == pygame.KEYDOWN and event.key == K_ESCAPE:
+        if is_close_app_event(event):
             game_over()
+            return
 
     P1.update()
     H1.move(scoreboard, P1.player_position)
@@ -87,16 +87,12 @@ def main_menu_phase():
     events = pygame.event.get()
 
     for event in events:
-        if event.type != pygame.KEYDOWN:
-            continue
-
-        if event.key == K_ESCAPE:
+        if is_close_app_event(event):
             GlobalState.GAME_STATE = GameStatus.GAME_END
             return
 
-        GlobalState.GAME_STATE = GameStatus.GAMEPLAY
-
-        pygame.event.clear()
+        if event.type == pygame.KEYDOWN:
+            GlobalState.GAME_STATE = GameStatus.GAMEPLAY
 
     GlobalState.SCROLL = update_background_using_scroll(GlobalState.SCROLL)
     VisualizationService.draw_background_with_scroll(GlobalState.SCREEN, GlobalState.SCROLL)
