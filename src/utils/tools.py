@@ -28,3 +28,6 @@ def update_press_key(press_y):
 
 def is_close_app_event(event):
     return (event.type == QUIT) or (event.type == pygame.KEYDOWN and event.key == K_ESCAPE)
+
+def is_escape_event(event):
+    return (event.type == pygame.KEYDOWN and event.key == K_ESCAPE)

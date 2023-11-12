@@ -11,7 +11,7 @@ from src.components.scoreboard import Scoreboard
 from src.global_state import GlobalState
 from src.services.music_service import MusicService
 from src.services.visualization_service import VisualizationService
-from src.utils.tools import update_background_using_scroll, update_press_key, is_close_app_event
+from src.utils.tools import update_background_using_scroll, update_press_key, is_close_app_event, is_escape_event
 
 GlobalState.load_main_screen()
 VisualizationService.load_main_game_displays()
@@ -56,8 +56,12 @@ def gameplay_phase():
     events = pygame.event.get()
 
     for event in events:
+        if is_escape_event(event):
+            game_over(sleep=0)
+            return
         if is_close_app_event(event):
-            game_over()
+            # exit_game_phase() # not needed because it's used in the main loop if the gamestate is 2 (from gamestatus)
+            GlobalState.GAME_STATE = GameStatus.GAME_END
             return
 
     P1.update()
@@ -84,9 +88,9 @@ def exit_game_phase():
     sys.exit()
 
 
-def game_over():
+def game_over(sleep=0.5):
     P1.reset()
     H1.reset()
     H2.reset()
     GlobalState.GAME_STATE = GameStatus.MAIN_MENU
-    time.sleep(0.5)
+    time.sleep(sleep)
