@@ -9,7 +9,7 @@ This [game was made in 3 days](https://www.youtube.com/watch?v=H09PmP5tsy8) with
 
 ## How to Play
 
-* Use the arrow keys your maneuver your hand out of the way.
+* Use the arrow keys or WASD to maneuver your hand out of the way.
 
 ## Installation
 
@@ -40,7 +40,7 @@ sudo apt-get install python3-pygame
 Arch
 
 ```sh
-sudo pacman -S python-pygame
+sudo pacman -S python3-pygame
 ```
 
 Fedora
